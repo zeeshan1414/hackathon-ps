@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_21_104351) do
+ActiveRecord::Schema.define(version: 2021_01_22_054507) do
+
+  create_table "challenges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.bigint "employee_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["employee_id"], name: "index_challenges_on_employee_id"
+  end
 
   create_table "employees", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "employee_id", default: "", null: false
@@ -21,4 +30,5 @@ ActiveRecord::Schema.define(version: 2021_01_21_104351) do
     t.index ["employee_id"], name: "index_employees_on_employee_id", unique: true
   end
 
+  add_foreign_key "challenges", "employees"
 end
