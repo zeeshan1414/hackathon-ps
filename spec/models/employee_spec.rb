@@ -4,7 +4,7 @@ RSpec.describe Employee, type: :model do
   let(:employee) { build(:employee) }
 
   context 'Validations' do
-    it 'has a employee id' do
+    it 'has a employee_id' do
       employee.employee_id = ''
       expect(employee).to_not be_valid
       
@@ -19,10 +19,10 @@ RSpec.describe Employee, type: :model do
       employee.password = Faker::Internet.password
       expect(employee).to be_valid
     end
+  end
 
-    it 'should save successfully' do
-      expect(employee.save).to eq(true)
-    end
+  context 'Associations' do
+    it { expect(employee).to have_many(:challenges) }
   end
 
 end

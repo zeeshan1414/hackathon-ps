@@ -7,3 +7,6 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 (1..10).each { |n| Employee.create(employee_id: "EMP_#{n}", password: "welcome1234") }
+
+tags = ['Dynamic Programming', 'Greedy Algorithm', 'Brute-force', 'Matrix', 'Arrays', 'Strings', 'Linked List', 'Graph', 'Tree']
+tags.each { |tag| Tag.create(name: tag) }

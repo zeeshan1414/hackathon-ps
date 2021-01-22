@@ -3,5 +3,6 @@ FactoryBot.define do
     title { "MyString" }
     description { "MyText" }
     employee { create(:employee) }
+    tag { create(:tag) }
   end
 end

@@ -28,12 +28,21 @@ RSpec.describe Challenge, type: :model do
       expect(challenge).to be_valid
     end
 
-    # it 'must have a tag' do
-    #   challenge.tag_id = nil
-    #   expect(challenge).to_not be_valid
+    it 'must have a tag_id' do
+      challenge.tag = nil
+      expect(challenge).to_not be_valid
 
-    #   challenge.tag_id = 1
-    #   expect(challenge).to be_valid
-    # end
+      challenge.tag = build(:tag)
+      expect(challenge).to be_valid
+    end
+
+    it 'should save successfully' do
+      expect(challenge.save).to eq(true)
+    end
+  end
+
+  context 'Associations' do
+    it { expect(challenge).to belong_to(:employee) }
+    it { expect(challenge).to belong_to(:tag) }
   end
 end
