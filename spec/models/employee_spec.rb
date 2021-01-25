@@ -23,6 +23,7 @@ RSpec.describe Employee, type: :model do
 
   context 'Associations' do
     it { expect(employee).to have_many(:challenges) }
+    it { expect(employee).to have_many(:votes) }
   end
 
 end

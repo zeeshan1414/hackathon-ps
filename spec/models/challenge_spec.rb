@@ -44,5 +44,6 @@ RSpec.describe Challenge, type: :model do
   context 'Associations' do
     it { expect(challenge).to belong_to(:employee) }
     it { expect(challenge).to belong_to(:tag) }
+    it { expect(challenge).to have_many(:votes)}
   end
 end

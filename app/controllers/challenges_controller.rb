@@ -28,15 +28,22 @@ class ChallengesController < ApplicationController
 
   def upvote
     @challenge = Challenge.find(params[:id])
-    @challenge.votes += 1
 
-    respond_to do |format|
-      if @challenge.employee != current_employee && @challenge.save
-        format.html { redirect_to challenges_url, notice: 'Challenge was successfully upvoted.' }
-        format.json { render json: @challenge, status: :created, location: @challenge }
-      else
-        format.html { redirect_to challenges_url, alert: 'Challenge was not successfully upvoted.' }
-        format.json { render json: @challenge.errors, status: :unprocessable_entity }
+    if @challenge.employee == current_employee
+      respond_to do |format|
+        format.html { redirect_to challenges_path, alert: "You can't vote your own challenge." }
+        format.json { render json: @challenge, status: :forbidden, location: @challenge }
+      end
+    elsif @challenge.votes.exists?(employee_id: current_employee.id)
+      respond_to do |format|
+        format.html { redirect_to challenges_path, alert: "You can't vote more than once." }
+        format.json { render json: @challenge, status: :forbidden, location: @challenge }
+      end
+    else
+      @challenge.votes.create(employee_id: current_employee.id)
+      respond_to do |format|
+        format.html { redirect_to challenges_path, notice: "Challenge was successfully upvoted." }
+        format.json { render json: @challenge, status: :success, location: @challenge }
       end
     end
   end

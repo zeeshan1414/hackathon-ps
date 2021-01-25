@@ -18,14 +18,14 @@
         <th scope="row"><%= challenge.id %></th>
         <td class="text-break"><%= challenge.title %></td>
         <td class="text-break"><%= challenge.description %></td>
-        <td><%= challenge.votes %></td>
+        <td><%= challenge.votes.count %></td>
         <td><%= challenge.employee.employee_id %></td>
         <td><%= challenge.created_at.to_date.inspect %></td>
         <td><%= challenge.tag.name %></td>
         <td class="text-break"><%= challenge.collaborators.map(&:name) %></td>
         <td class="d-flex justify-content-between">
-          <%= button_to 'upvote', challenge_upvote_path(challenge), method: :put, class: 'btn btn-primary' %>
-          <%= button_to 'collaborate', challenge_collaborate_path(challenge), class: 'btn btn-secondary' %>
+          <%= button_to 'upvote', upvote_challenge_path(challenge), class: 'btn btn-primary' %>
+          <%= button_to 'collaborate', collaborate_challenge_path(challenge), class: 'btn btn-secondary' %>
         </td>
       </tr>
     <% end %>

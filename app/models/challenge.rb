@@ -6,4 +6,6 @@ class Challenge < ApplicationRecord
   foreign_key: :employee_id, dependent: :destroy
 
   validates :title, :description, presence: true
+
+  has_many :votes, dependent: :destroy
 end
