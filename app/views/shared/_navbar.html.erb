@@ -1,0 +1,11 @@
+<!-- As a link -->
+<nav class="navbar navbar-dark bg-primary">
+  <%= link_to 'Hackathon', challenges_path, class: 'navbar-brand' %>
+  <% if employee_signed_in? %>
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <%= link_to "Logout '#{current_employee.employee_id}'", destroy_employee_session_path, class: 'nav-link', method: :delete %>
+      </li>
+    </ul>
+  <% end %>
+</nav>
