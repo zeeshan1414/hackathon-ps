@@ -5,6 +5,7 @@ class Employee < ApplicationRecord
 
   validates :employee_id, :password, presence: true
 
-  has_many :challenges, dependent: :destroy
+  has_many :collaborations, dependent: :destroy
+  has_many :challenges, through: :collaborations
   has_many :votes, through: :challenges
 end

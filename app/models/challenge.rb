@@ -4,5 +4,7 @@ class Challenge < ApplicationRecord
 
   validates :title, :description, presence: true
 
+  has_many :collaborations, dependent: :destroy
+  has_many :employees, through: :collaborations
   has_many :votes, dependent: :destroy
 end

@@ -58,11 +58,23 @@ class ChallengesController < ApplicationController
 
   def collaborate
     @challenge = Challenge.find(params[:id])
-    @challenge.collaborators << current_employee unless @challenge.employee == current_employee
-
-    respond_to do |format|
-      format.html { render :index, notice: 'Successfully collaborated in Challenge' }
-      format.json { render json: @challenge, status: :created }
+    
+    if @challenge.employee == current_employee
+      respond_to do |format|
+        format.html { redirect_to challenges_path, alert: "You can't collaborate on your own challenge." }
+        format.json { render json: @challenge, status: :forbidden, location: @challenge }
+      end
+    elsif @challenge.employees.exists?(employee_id: current_employee.employee_id)
+      respond_to do |format|
+        format.html { redirect_to challenges_path, alert: "You are already collaborating on this challenge." }
+        format.json { render json: @challenge, status: :forbidden, location: @challenge }
+      end
+    else
+      @challenge.employees << current_employee
+      respond_to do |format|
+        format.html { redirect_to challenges_path, notice: "You are successfully added to the collaborators list." }
+        format.json { render json: @challenge, status: :created, location: @challenge }
+      end
     end
   end
 

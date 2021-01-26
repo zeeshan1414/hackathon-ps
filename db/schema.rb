@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_25_050239) do
+ActiveRecord::Schema.define(version: 2021_01_26_051433) do
 
   create_table "challenges", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title", null: false
@@ -21,6 +21,15 @@ ActiveRecord::Schema.define(version: 2021_01_25_050239) do
     t.bigint "tag_id", null: false
     t.index ["employee_id"], name: "index_challenges_on_employee_id"
     t.index ["tag_id"], name: "index_challenges_on_tag_id"
+  end
+
+  create_table "collaborations", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "challenge_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["challenge_id"], name: "index_collaborations_on_challenge_id"
+    t.index ["employee_id"], name: "index_collaborations_on_employee_id"
   end
 
   create_table "employees", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -49,6 +58,8 @@ ActiveRecord::Schema.define(version: 2021_01_25_050239) do
 
   add_foreign_key "challenges", "employees"
   add_foreign_key "challenges", "tags"
+  add_foreign_key "collaborations", "challenges"
+  add_foreign_key "collaborations", "employees"
   add_foreign_key "votes", "challenges"
   add_foreign_key "votes", "employees"
 end
