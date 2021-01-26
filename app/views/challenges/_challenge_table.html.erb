@@ -1,33 +1,35 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Challenge_id</th>
-      <th scope="col">Title</th>
-      <th scope="col">Description</th>
-      <th scope="col">Votes</th>
-      <th scope="col">Created_by</th>
-      <th scope="col">Create_date</th>
-      <th scope="col">Tags</th>
-      <th scope="col">Collaborators</th>
-      <th scope="col" class="text-center">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% challenges.each do |challenge| %>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
       <tr>
-        <th scope="row"><%= challenge.id %></th>
-        <td class="text-break"><%= challenge.title %></td>
-        <td class="text-break"><%= challenge.description %></td>
-        <td><%= challenge.votes.count %></td>
-        <td><%= challenge.employee.employee_id %></td>
-        <td><%= challenge.created_at.to_date.inspect %></td>
-        <td><%= challenge.tag.name %></td>
-        <td class="text-break"><%= challenge.collaborators.map(&:name) %></td>
-        <td class="d-flex justify-content-between">
-          <%= button_to 'upvote', upvote_challenge_path(challenge), class: 'btn btn-primary' %>
-          <%= button_to 'collaborate', collaborate_challenge_path(challenge), class: 'btn btn-secondary' %>
-        </td>
+        <th scope="col">Challenge_id</th>
+        <th scope="col">Title</th>
+        <th scope="col">Description</th>
+        <th scope="col"><%= link_to "Votes", sort: "votes" %></th>
+        <th scope="col">Created_by</th>
+        <th scope="col"><%= link_to "Create_date", sort: "created_at" %></th>
+        <th scope="col">Tags</th>
+        <th scope="col">Collaborators</th>
+        <th scope="col" class="text-center">Actions</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% challenges.each do |challenge| %>
+        <tr>
+          <th scope="row"><%= challenge.id %></th>
+          <td class="text-break"><%= challenge.title %></td>
+          <td class="text-break"><%= challenge.description %></td>
+          <td><%= challenge.votes.count %></td>
+          <td><%= challenge.employee.employee_id %></td>
+          <td><%= challenge.created_at.to_date.inspect %></td>
+          <td><%= challenge.tag.name %></td>
+          <td class="text-break"><%= challenge.employee.employee_id %></td>
+          <td class="d-flex justify-content-between">
+            <%= button_to 'upvote', upvote_challenge_path(challenge), class: 'btn btn-primary' %>
+            <%= button_to 'collaborate', collaborate_challenge_path(challenge), class: 'btn btn-secondary' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -3,11 +3,19 @@ class ChallengesController < ApplicationController
 
   def index
     @challenge = Challenge.new
-    @challenges = Challenge.all
+
+    sort_criteria = params[:sort]
+    if sort_criteria == "created_at"
+      @challenges = Challenge.order(sort_criteria)
+    elsif sort_criteria == "votes"
+      @challenges = Challenge.all.sort_by { |challenge| challenge.votes.count }.reverse
+    else
+      @challenges = Challenge.all
+    end
 
     respond_to do |format|
       format.html { render :index }
-      format.json { render json: @challenges }
+      format.json { render json: @challenges, status: :ok }
     end
   end
 
@@ -43,7 +51,7 @@ class ChallengesController < ApplicationController
       @challenge.votes.create(employee_id: current_employee.id)
       respond_to do |format|
         format.html { redirect_to challenges_path, notice: "Challenge was successfully upvoted." }
-        format.json { render json: @challenge, status: :success, location: @challenge }
+        format.json { render json: @challenge, status: :created, location: @challenge }
       end
     end
   end
@@ -54,7 +62,7 @@ class ChallengesController < ApplicationController
 
     respond_to do |format|
       format.html { render :index, notice: 'Successfully collaborated in Challenge' }
-      format.json { render json: @challenge, status: :success }
+      format.json { render json: @challenge, status: :created }
     end
   end
 
