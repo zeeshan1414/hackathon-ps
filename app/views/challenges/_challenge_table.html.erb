@@ -17,7 +17,7 @@
       <% challenges.each do |challenge| %>
         <tr>
           <th scope="row"><%= challenge.id %></th>
-          <td class="text-break"><%= challenge.title %></td>
+          <td><%= challenge.title %></td>
           <td class="text-break"><%= challenge.description %></td>
           <td><%= challenge.votes.count %></td>
           <td><%= challenge.employee.employee_id %></td>
