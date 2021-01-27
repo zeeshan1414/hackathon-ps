@@ -1,17 +1,13 @@
 class ChallengesController < ApplicationController
   before_action :authenticate_employee!
+  before_action :find_challenge, only: %w[upvote collaborate]
 
   def index
+    # To Add new Challenge from Index page
     @challenge = Challenge.new
 
-    sort_criteria = params[:sort]
-    if sort_criteria == "created_at"
-      @challenges = Challenge.order(sort_criteria)
-    elsif sort_criteria == "votes"
-      @challenges = Challenge.all.sort_by { |challenge| challenge.votes.count }.reverse
-    else
-      @challenges = Challenge.all
-    end
+    # get all challenges
+    @challenges = sort_challenges(params[:sort])
 
     respond_to do |format|
       format.html { render :index }
@@ -25,55 +21,35 @@ class ChallengesController < ApplicationController
 
     respond_to do |format|
       if @challenge.save
-        format.html { redirect_to challenges_path, notice: 'Challenge was successfully created.' }
-        format.json { render json: @challenge, status: :created, location: @challenge }
+        challenge_success_response(format, @challenge, msg: 'Challenge was successfully created.')
       else
-        format.html { redirect_to challenges_path, alert: 'Challenge was not successfully created.' }
-        format.json { render json: @challenge.errors, status: :unprocessable_entity }
+        challenge_failure_response(format, @challenge, status: :unprocessable_entity, msg: 'Challenge was not successfully created.')
       end
     end
   end
 
   def upvote
-    @challenge = Challenge.find(params[:id])
-
-    if @challenge.employee == current_employee
-      respond_to do |format|
-        format.html { redirect_to challenges_path, alert: "You can't vote your own challenge." }
-        format.json { render json: @challenge, status: :forbidden, location: @challenge }
-      end
-    elsif @challenge.votes.exists?(employee_id: current_employee.id)
-      respond_to do |format|
-        format.html { redirect_to challenges_path, alert: "You can't vote more than once." }
-        format.json { render json: @challenge, status: :forbidden, location: @challenge }
-      end
-    else
-      @challenge.votes.create(employee_id: current_employee.id)
-      respond_to do |format|
-        format.html { redirect_to challenges_path, notice: "Challenge was successfully upvoted." }
-        format.json { render json: @challenge, status: :created, location: @challenge }
+    respond_to do |format|
+      if @challenge.employee == current_employee
+        challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't vote your own challenge.")
+      elsif @challenge.votes.exists?(employee_id: current_employee.id)
+        challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't vote more than once.")
+      else
+        @challenge.votes.create(employee_id: current_employee.id)
+        challenge_success_response(format, @challenge, msg: 'Challenge was successfully upvoted.')
       end
     end
   end
 
   def collaborate
-    @challenge = Challenge.find(params[:id])
-    
-    if @challenge.employee == current_employee
-      respond_to do |format|
-        format.html { redirect_to challenges_path, alert: "You can't collaborate on your own challenge." }
-        format.json { render json: @challenge, status: :forbidden, location: @challenge }
-      end
-    elsif @challenge.employees.exists?(employee_id: current_employee.employee_id)
-      respond_to do |format|
-        format.html { redirect_to challenges_path, alert: "You are already collaborating on this challenge." }
-        format.json { render json: @challenge, status: :forbidden, location: @challenge }
-      end
-    else
-      @challenge.employees << current_employee
-      respond_to do |format|
-        format.html { redirect_to challenges_path, notice: "You are successfully added to the collaborators list." }
-        format.json { render json: @challenge, status: :created, location: @challenge }
+    respond_to do |format|
+      if @challenge.employee == current_employee
+        challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't collaborate on your own challenge.")
+      elsif @challenge.employees.exists?(employee_id: current_employee.employee_id)
+        challenge_failure_response(format, @challenge, status: :forbidden, msg: 'You are already collaborating on this challenge.')
+      else
+        @challenge.employees << current_employee
+        challenge_success_response(format, @challenge, msg: 'You are successfully added to the collaborators list.')
       end
     end
   end
@@ -82,5 +58,30 @@ class ChallengesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def challenge_params
     params.require(:challenge).permit(:title, :description, :tag_id)
+  end
+
+  def find_challenge
+    @challenge = Challenge.find(params[:id])
+  end
+
+  def challenge_success_response(format, challenge, msg:)
+    format.html { redirect_to challenges_path, notice: msg }
+    format.json { render json: challenge, status: :created, location: challenge }
+  end
+
+  def challenge_failure_response(format, challenge, status:, msg:)
+    format.html { redirect_to challenges_path, alert: msg }
+    format.json { render json: challenge.errors, status: status, location: challenge }
+  end
+
+  def sort_challenges(criteria)
+    case criteria
+    when 'created_at'
+      Challenge.order(criteria)
+    when 'votes'
+      Challenge.all.sort_by { |challenge| challenge.votes.count }.reverse
+    else
+      Challenge.all
+    end
   end
 end

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :challenges, only: %w(index create) do
+  resources :challenges, only: %w[index create] do
     member do
       post :upvote
       post :collaborate
