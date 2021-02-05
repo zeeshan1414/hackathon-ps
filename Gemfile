@@ -19,6 +19,8 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.7'
 # Flexible authentication solution for Rails with Warden. Read more: https://github.com/heartcombo/devise
 gem 'devise', '~> 4.2'
+# The Ultimate Pagination Ruby Gem. Read more: https://ddnexus.github.io/pagy
+gem 'pagy'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
