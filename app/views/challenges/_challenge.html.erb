@@ -1,0 +1,14 @@
+<tr>
+  <th scope="row"><%= challenge.id %></th>
+  <td><%= challenge.title %></td>
+  <td class="text-break"><%= challenge.description %></td>
+  <td><%= challenge.votes.count %></td>
+  <td><%= challenge.employee.employee_id %></td>
+  <td><%= challenge.created_at.to_date.inspect %></td>
+  <td><%= challenge.tag.name %></td>
+  <td class="text-break"><%= challenge.employees.map(&:employee_id).join(', ') %></td>
+  <td class="d-flex justify-content-between">
+    <%= button_to 'upvote', upvote_challenge_path(challenge), class: 'btn btn-primary' %>
+    <%= button_to 'collaborate', collaborate_challenge_path(challenge), class: 'btn btn-secondary' %>
+  </td>
+</tr>

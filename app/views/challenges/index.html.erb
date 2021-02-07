@@ -1,5 +1,5 @@
 <div class="w-75 mx-auto">
-  <%= render 'add_challenge', challenge: @challenge %>
-  <h1>Challenge List</h1>
-  <%= render 'challenge_table', challenges: @challenges %>
+  <%= render 'form', object: @challenge %>
+  <h1 class="text-center mb-4">Challenges List</h1>
+  <%= render 'challenge_table' %>
 </div>

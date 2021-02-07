@@ -1,35 +1,20 @@
 <div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
+  <table class="table table-striped" id="challenge-table">
+    <thead class="thead-light">
       <tr>
         <th scope="col">Id</th>
         <th scope="col">Title</th>
         <th scope="col">Description</th>
-        <th scope="col"><%= link_to "Votes", sort: "votes" %></th>
+        <th scope="col">Votes</th>
         <th scope="col">Created_by</th>
-        <th scope="col"><%= link_to "Create_date", sort: "created_at" %></th>
+        <th scope="col">Create_date</th>
         <th scope="col">Tags</th>
         <th scope="col">Collaborators</th>
         <th scope="col" class="text-center">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <% challenges.each do |challenge| %>
-        <tr>
-          <th scope="row"><%= challenge.id %></th>
-          <td><%= challenge.title %></td>
-          <td class="text-break"><%= challenge.description %></td>
-          <td><%= challenge.votes.count %></td>
-          <td><%= challenge.employee.employee_id %></td>
-          <td><%= challenge.created_at.to_date.inspect %></td>
-          <td><%= challenge.tag.name %></td>
-          <td class="text-break"><%= challenge.employees.map(&:employee_id).join(', ') %></td>
-          <td class="d-flex justify-content-between">
-            <%= button_to 'upvote', upvote_challenge_path(challenge), class: 'btn btn-primary' %>
-            <%= button_to 'collaborate', collaborate_challenge_path(challenge), class: 'btn btn-secondary' %>
-          </td>
-        </tr>
-      <% end %>
+      <%= render @challenges.includes(:votes, :tag, :employees) %>
     </tbody>
   </table>
   <%== pagy_bootstrap_nav(@challenges_pagy) %>
