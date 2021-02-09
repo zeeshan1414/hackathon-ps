@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-(1..10).each { |n| Employee.create(employee_id: "EMP_#{n}", password: "welcome1234") }
+(1..20).each { |n| Employee.create(employee_id: "EMP_#{n}", first_name: Faker::Name.first_name , last_name: Faker::Name.last_name, email: Faker::Internet.email, password: "welcome1234") }
 
 tags = ['Dynamic Programming', 'Greedy Algorithm', 'Brute-force', 'Matrix', 'Arrays', 'Strings', 'Linked List', 'Graph', 'Tree']
 tags.each { |tag| Tag.create(name: tag) }

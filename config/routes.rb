@@ -6,9 +6,12 @@ Rails.application.routes.draw do
     end
   end
   devise_for :employees
-
-  # put 'challenges/upvote/:id', to: 'challenges#upvote', as: 'challenge_upvote'
-  # post 'challenges/collaborate/:id', to: 'challenges#collaborate', as: 'challenge_collaborate'
+  resources :employees, only: :show do
+    member do
+      get :challenges
+      get :collaborations
+    end
+  end
 
   root to: 'challenges#index'
 end

@@ -7,7 +7,7 @@ class ChallengesController < ApplicationController
     @challenge = Challenge.new
 
     # get all challenges
-    @challenges_pagy, @challenges = pagy(Challenge.all, items: 5)
+    @pagy, @challenges = pagy(Challenge.includes(:tag, :employees), items: 5)
 
     respond_to do |format|
       format.html { render :index }

@@ -1,0 +1,8 @@
+<div class="w-75 mx-auto">
+  <h1><%= @employee.employee_id %></h1>
+  <h1><%= @employee.first_name + ' ' + @employee.last_name %></h1>
+  <h1><%= @employee.email %></h1>
+  <%= link_to "Challenges", challenges_employee_path(@employee) %>
+  <%= link_to "Collaborations", collaborations_employee_path(@employee) %>
+  <%= link_to "Back", root_path %>
+</div>

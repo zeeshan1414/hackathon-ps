@@ -4,18 +4,20 @@
       <tr>
         <th scope="col">Id</th>
         <th scope="col">Title</th>
-        <th scope="col">Description</th>
+        <th scope="col" data-sorter="false">Description</th>
         <th scope="col">Votes</th>
         <th scope="col">Created_by</th>
         <th scope="col">Create_date</th>
         <th scope="col">Tags</th>
         <th scope="col">Collaborators</th>
-        <th scope="col" class="text-center">Actions</th>
+        <th scope="col" class="text-center" data-sorter="false">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <%= render @challenges.includes(:votes, :tag, :employees) %>
+      <% @challenges.each do |challenge| %>
+        <%= render 'challenges/challenge', challenge: challenge %>
+      <% end %>
     </tbody>
   </table>
-  <%== pagy_bootstrap_nav(@challenges_pagy) %>
+  <%== pagy_bootstrap_nav(@pagy) %>
 </div>
