@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h2>Hi <%= @recipient.first_name %>,</h2>
+  <p><%= @sender.first_name %> is collaborating on your challenge <%= link_to @challenge.title, challenges_url %>!</p>
+</body>
+</html>

@@ -37,6 +37,7 @@ class ChallengesController < ApplicationController
         challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't vote more than once.")
       else
         @challenge.votes.create(employee_id: current_employee.id)
+        ChallengeMailer.with(employee: current_employee, challenge: @challenge).send_upvote_email.deliver_later
         challenge_success_response(format, @challenge, msg: 'Challenge was successfully upvoted.')
       end
     end
@@ -52,6 +53,8 @@ class ChallengesController < ApplicationController
                                                        msg: 'You are already collaborating on this challenge.')
       else
         @challenge.employees << current_employee
+        # Deliver the colloboration mail
+        ChallengeMailer.with(employee: current_employee, challenge: @challenge).send_collaborate_email.deliver_later
         challenge_success_response(format, @challenge, msg: 'You are successfully added to the collaborators list.')
       end
     end
@@ -69,12 +72,12 @@ class ChallengesController < ApplicationController
   end
 
   def challenge_success_response(format, challenge, msg:)
-    format.html { redirect_to challenges_path, notice: msg }
+    format.html { redirect_back fallback_location: challenges_path, notice: msg }
     format.json { render json: challenge, status: :created, location: challenge }
   end
 
   def challenge_failure_response(format, challenge, status:, msg:)
-    format.html { redirect_to challenges_path, alert: msg }
+    format.html { redirect_back fallback_location: challenges_path, alert: msg }
     format.json { render json: challenge.errors, status: status, location: challenge }
   end
 end
