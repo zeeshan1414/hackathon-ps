@@ -3,9 +3,6 @@ class ChallengesController < ApplicationController
   before_action :find_challenge, only: %w[upvote collaborate]
 
   def index
-    # To Add new Challenge from Index page
-    @challenge = Challenge.new
-
     # get all challenges
     @pagy, @challenges = pagy(Challenge.includes(:tag, :employees), items: 5)
 
@@ -16,46 +13,37 @@ class ChallengesController < ApplicationController
   end
 
   def create
-    @challenge = Challenge.new(challenge_params)
-    @challenge.employee = current_employee
+    @challenge = ChallengeManager::ChallengeCreator.call(challenge_params, current_employee)
 
     respond_to do |format|
       if @challenge.save
-        challenge_success_response(format, @challenge, msg: 'Challenge was successfully created.')
+        challenge_success_response(format, @challenge, :created, msg: 'Challenge was successfully created.')
       else
-        challenge_failure_response(format, @challenge, status: :unprocessable_entity,
-                                                       msg: 'Challenge was not successfully created.')
+        challenge_failure_response(format, @challenge, :unprocessable_entity, msg: @challenge.errors.full_messages)
       end
     end
   end
 
   def upvote
+    @upvoted_challenge = ChallengeManager::VoteCreator.call(@challenge, current_employee)
+
     respond_to do |format|
-      if @challenge.employee == current_employee
-        challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't vote your own challenge.")
-      elsif @challenge.votes.exists?(employee_id: current_employee.id)
-        challenge_failure_response(format, @challenge, status: :forbidden, msg: "You can't vote more than once.")
+      unless @upvoted_challenge.errors.any?
+        challenge_success_response(format, @challenge, :created, msg: 'Challenge was upvoted successfully' )
       else
-        @challenge.votes.create(employee_id: current_employee.id)
-        ChallengeMailer.with(employee: current_employee, challenge: @challenge).send_upvote_email.deliver_later
-        challenge_success_response(format, @challenge, msg: 'Challenge was successfully upvoted.')
+        challenge_failure_response(format, @challenge, :forbidden, msg: @upvoted_challenge.errors.full_messages.join(','))
       end
     end
   end
 
   def collaborate
+    @collaborated_challenge = ChallengeManager::CollaborationCreator.call(@challenge, current_employee)
+
     respond_to do |format|
-      if @challenge.employee == current_employee
-        challenge_failure_response(format, @challenge, status: :forbidden,
-                                                       msg: "You can't collaborate on your own challenge.")
-      elsif @challenge.employees.exists?(employee_id: current_employee.employee_id)
-        challenge_failure_response(format, @challenge, status: :forbidden,
-                                                       msg: 'You are already collaborating on this challenge.')
+      unless @collaborated_challenge.errors.any?
+        challenge_success_response(format, @challenge, :created, msg: 'Successfully added to the collaborators list')
       else
-        @challenge.employees << current_employee
-        # Deliver the colloboration mail
-        ChallengeMailer.with(employee: current_employee, challenge: @challenge).send_collaborate_email.deliver_later
-        challenge_success_response(format, @challenge, msg: 'You are successfully added to the collaborators list.')
+        challenge_failure_response(format, @challenge, :forbidden, msg: @collaborated_challenge.errors.full_messages.join(','))
       end
     end
   end
@@ -71,12 +59,12 @@ class ChallengesController < ApplicationController
     @challenge = Challenge.find(params[:id])
   end
 
-  def challenge_success_response(format, challenge, msg:)
+  def challenge_success_response(format, challenge, status, msg:)
     format.html { redirect_back fallback_location: challenges_path, notice: msg }
-    format.json { render json: challenge, status: :created, location: challenge }
+    format.json { render json: challenge, status: status, location: challenge }
   end
 
-  def challenge_failure_response(format, challenge, status:, msg:)
+  def challenge_failure_response(format, challenge, status, msg:)
     format.html { redirect_back fallback_location: challenges_path, alert: msg }
     format.json { render json: challenge.errors, status: status, location: challenge }
   end
